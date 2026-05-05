@@ -1,0 +1,16 @@
+# 禁止执行 PHP 脚本
+<FilesMatch "\.php$">
+    Deny from all
+</FilesMatch>
+
+# 禁止访问 .htaccess 文件
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# 只允许访问图片文件
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|ico|svg)$">
+    Order deny,allow
+    Allow from all
+</FilesMatch>

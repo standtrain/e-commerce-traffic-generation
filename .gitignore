@@ -1,0 +1,10 @@
+# Generated config (contains database credentials)
+config.php
+
+# Uploads
+uploads/*
+!uploads/.htaccess
+
+# OS files
+.DS_Store
+Thumbs.db
