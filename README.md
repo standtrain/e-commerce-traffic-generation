@@ -10,7 +10,14 @@
 
 ### 功能特性
 
+![系统界面概览](shouye.jpg)
+*图1：前台首页展示 - 多平台商品链接聚合展示，支持响应式设计*
+
 - **多平台商品管理** — 支持淘宝、天猫、京东、闲鱼、亚马逊、拼多多、抖音、唯品会等主流电商平台，也可自定义平台
+
+![管理后台界面](admin.jpg) 
+*图2：后台管理系统 - 包含链接管理、用户管理、网站设置等完整功能模块*
+
 - **一键获取商品信息** — 粘贴商品链接后自动抓取标题、描述、价格等信息
 - **AI 智能总结** — 接入 OpenAI / DeepSeek 等兼容 API，自动生成商品总结、详细介绍和标签
 - **多语言支持** — 中文、English、日本語、한국어 四语言切换
@@ -23,6 +30,9 @@
 - **联系方式页面** — 展示微信、QQ、邮箱、电话等联系信息
 - **CSRF 防护** — 所有表单操作均带 CSRF Token 验证
 - **响应式设计** — 适配桌面端与移动端
+
+![登录界面](login.jpg)
+*图3：用户登录界面 - 简洁安全的登录表单设计*
 
 ### 环境要求
 
@@ -113,13 +123,26 @@
 
 ---
 
+## 许可证与贡献
+
+本项目采用 [Apache License 2.0](LICENSE) 开源许可证。
+
+欢迎提交 Issue 和 Pull Request！用于报告问题、提出新功能建议或改进代码。
+
 ## English
 
 A clean and efficient e-commerce product link management and traffic tool, built with PHP + MySQL. Supports multi-platform product link aggregation, AI-powered summarization, multi-language switching, dark/light themes, and more.
 
 ### Features
 
+![System Interface Overview](shouye.jpg)
+*Fig.1: Frontend Homepage - Multi-platform product link aggregation display with responsive design*
+
 - **Multi-platform Product Management** — Supports major platforms including Taobao, Tmall, JD, Xianyu, Amazon, Pinduoduo, Douyin, Vipshop, and custom platforms
+
+![Admin Panel Interface](admin.jpg) 
+*Fig.2: Admin Management System - Complete functional modules including link management, user management, site settings*
+
 - **One-click Product Info** — Automatically fetches title, description, and price after pasting a product link
 - **AI Smart Summary** — Integrates with OpenAI / DeepSeek compatible APIs to auto-generate product summaries, detailed descriptions, and tags
 - **Multi-language Support** — Switch between Chinese, English, Japanese, and Korean
@@ -132,6 +155,9 @@ A clean and efficient e-commerce product link management and traffic tool, built
 - **Contact Page** — Display WeChat, QQ, email, phone, and other contact information
 - **CSRF Protection** — All form operations include CSRF Token verification
 - **Responsive Design** — Optimized for both desktop and mobile
+
+![Login Interface](login.jpg)
+*Fig.3: User Login Interface - Clean and secure login form design*
 
 ### Requirements
 
@@ -222,13 +248,28 @@ Once enabled, AI will automatically generate product summaries, detailed descrip
 
 ---
 
+## License & Contribution
+
+This project is licensed under the [Apache License 2.0](LICENSE).
+
+Contributions are welcome! Please submit Issues and Pull Requests for bug reports, feature suggestions, or code improvements.
+
+---
+
 ## 日本語
 
 PHP + MySQL で構築された、シンプルで効率的なEC商品リンク管理・集客ツールです。マルチプラットフォームの商品リンク集約表示、AI要約、多言語切替、ダーク/ライトテーマなどの機能をサポートしています。
 
 ### 機能一覧
 
+![システムインターフェース概要](shouye.jpg)
+*図1：フロントエンドホームページ - マルチプラットフォーム商品リンク集約表示とレスポンシブデザイン*
+
 - **マルチプラットフォーム商品管理** — Taobao、Tmall、JD、Xianyu、Amazon、Pinduoduo、Douyin、Vipshopなどの主要ECプラットフォームに対応、カスタムプラットフォームも可能
+
+![管理パネルインターフェース](admin.jpg) 
+*図2：管理システム - リンク管理、ユーザー管理、サイト設定などの完全な機能モジュール*
+
 - **ワンクリック商品情報取得** — 商品リンクを貼り付けると、タイトル・説明・価格を自動取得
 - **AIスマート要約** — OpenAI / DeepSeek 互換APIと連携し、商品要約・詳細説明・タグを自動生成
 - **多言語サポート** — 中国語、English、日本語、한국어 の4言語切替対応
@@ -241,6 +282,9 @@ PHP + MySQL で構築された、シンプルで効率的なEC商品リンク管
 - **お問い合わせページ** — WeChat、QQ、メール、電話などの連絡先を表示
 - **CSRF対策** — すべてのフォーム操作にCSRFトークン検証を実装
 - **レスポンシブデザイン** — デスクトップとモバイル両方に対応
+
+![ログインインターフェース](login.jpg)
+*図3：ユーザーログイン画面 - シンプルで安全なログインフォーム設計*
 
 ### 動作要件
 
@@ -323,11 +367,19 @@ PHP + MySQL で構築された、シンプルで効率的なEC商品リンク管
 - すべてのユーザー入力は `htmlspecialchars` でエスケープ
 - データベース操作はPDOプリペアドステートメントを使用しSQLインジェクションを防止
 - フォーム操作にはCSRFトークン検証を実装
-- パスワードは `password_hash` で暗号化保存
+- 비밀번호는 `password_hash`로 암호화 저장
 
-### 作者
+### 제작자
 
 [standtrain](https://blog.sttr.top)
+
+---
+
+## 许可证与贡献
+
+本项目采用 [Apache License 2.0](LICENSE) 开源许可证。
+
+欢迎提交 Issue 和 Pull Request！用于报告问题、提出新功能建议或改进代码。
 
 ---
 
@@ -337,7 +389,14 @@ PHP + MySQL로 구축된 간결하고 효율적인 전자상거래 상품 링크
 
 ### 주요 기능
 
+![시스템 인터페이스 개요](shouye.jpg)
+*도표1: 프론트엔드 메인페이지 - 다중 플랫폼 상품 링크 집약 표시와 반응형 디자인*
+
 - **다중 플랫폼 상품 관리** — 타오바오, 티몰, 징둥, 시안위, 아마존, 핀둬둬, 더우인, 웨이푸이후이 등 주요 전자상거래 플랫폼 지원 및 사용자 정의 플랫폼 가능
+
+![관리 패널 인터페이스](admin.jpg) 
+*도표2: 관리 시스템 - 링크 관리, 사용자 관리, 사이트 설정 등의 완전한 기능 모듈*
+
 - **원클릭 상품 정보 가져오기** — 상품 링크를 붙여넣으면 제목, 설명, 가격을 자동으로 가져옴
 - **AI 스마트 요약** — OpenAI / DeepSeek 호환 API와 연동하여 상품 요약, 상세 설명, 태그를 자동 생성
 - **다국어 지원** — 中文, English, 日本語, 한국어 4개 언어 전환 가능
@@ -350,6 +409,9 @@ PHP + MySQL로 구축된 간결하고 효율적인 전자상거래 상품 링크
 - **문의 페이지** — WeChat, QQ, 이메일, 전화 등 연락처 표시
 - **CSRF 방어** — 모든 폼 작업에 CSRF 토큰 검증 적용
 - **반응형 디자인** — 데스크톱 및 모바일 모두 최적화
+
+![로그인 인터페이스](login.jpg)
+*도표3: 사용자 로그인 인터페이스 - 간결하고 안전한 로그인 폼 디자인*
 
 ### 시스템 요구사항
 

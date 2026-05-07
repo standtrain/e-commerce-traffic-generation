@@ -133,6 +133,9 @@ $lang = [
         'admin_contact_image'=> '联系方式图片（可选）',
         'admin_current_image'=> '当前图片：',
         'admin_contact_image_hint' => '支持 JPG、PNG、GIF、WebP 格式，如二维码等',
+        'admin_security_settings' => '安全设置',
+        'admin_captcha_enable' => '启用登录验证码',
+        'admin_captcha_enable_hint' => '关闭后登录时不再加载验证码，提升登录速度',
         'admin_ai_settings' => 'AI 智能设置',
         'admin_ai_api_desc' => 'API 配置说明',
         'admin_ai_enable'   => '启用 AI 智能总结',
@@ -166,6 +169,7 @@ $lang = [
 
         // 消息
         'msg_csrf_fail'     => 'CSRF 验证失败，请重试',
+        'msg_captcha_fail'  => '验证码错误，请重新输入！',
         'msg_login_fail'    => '用户名或密码错误！',
         'msg_link_added'    => '链接添加成功！',
         'msg_link_updated'  => '链接更新成功！',
@@ -337,6 +341,9 @@ $lang = [
         'admin_contact_image'=> 'Contact Image (optional)',
         'admin_current_image'=> 'Current image:',
         'admin_contact_image_hint' => 'Supports JPG, PNG, GIF, WebP, e.g. QR code',
+        'admin_security_settings' => 'Security Settings',
+        'admin_captcha_enable' => 'Enable Login CAPTCHA',
+        'admin_captcha_enable_hint' => 'When disabled, CAPTCHA will not load on login, improving speed',
         'admin_ai_settings' => 'AI Settings',
         'admin_ai_api_desc' => 'API Configuration Guide',
         'admin_ai_enable'   => 'Enable AI Summary',
@@ -370,6 +377,7 @@ $lang = [
 
         // Messages
         'msg_csrf_fail'     => 'CSRF verification failed, please retry',
+        'msg_captcha_fail'  => 'CAPTCHA code incorrect, please try again!',
         'msg_login_fail'    => 'Invalid username or password!',
         'msg_link_added'    => 'Link added successfully!',
         'msg_link_updated'  => 'Link updated successfully!',
@@ -541,6 +549,9 @@ $lang = [
         'admin_contact_image'=> '連絡先画像（任意）',
         'admin_current_image'=> '現在の画像：',
         'admin_contact_image_hint' => 'JPG、PNG、GIF、WebP対応（QRコードなど）',
+        'admin_security_settings' => 'セキュリティ設定',
+        'admin_captcha_enable' => 'ログインCAPTCHAを有効化',
+        'admin_captcha_enable_hint' => '無効にするとログイン時にCAPTCHAを読み込まず、速度が向上します',
         'admin_ai_settings' => 'AI設定',
         'admin_ai_api_desc' => 'API設定ガイド',
         'admin_ai_enable'   => 'AI要約を有効化',
@@ -574,6 +585,7 @@ $lang = [
 
         // メッセージ
         'msg_csrf_fail'     => 'CSRF検証失敗。もう一度お試しください',
+        'msg_captcha_fail'  => '検証コードが間違っています。もう一度入力してください！',
         'msg_login_fail'    => 'ユーザー名またはパスワードが正しくありません！',
         'msg_link_added'    => 'リンクを追加しました！',
         'msg_link_updated'  => 'リンクを更新しました！',
@@ -745,6 +757,9 @@ $lang = [
         'admin_contact_image'=> '연락처 이미지（선택）',
         'admin_current_image'=> '현재 이미지：',
         'admin_contact_image_hint' => 'JPG, PNG, GIF, WebP 지원（QR 코드 등）',
+        'admin_security_settings' => '보안 설정',
+        'admin_captcha_enable' => '로그인 CAPTCHA 활성화',
+        'admin_captcha_enable_hint' => '비활성화 시 로그인 시 CAPTCHA를 로드하지 않아 속도가 향상됩니다',
         'admin_ai_settings' => 'AI 설정',
         'admin_ai_api_desc' => 'API 설정 가이드',
         'admin_ai_enable'   => 'AI 요약 활성화',
@@ -778,6 +793,7 @@ $lang = [
 
         // 메시지
         'msg_csrf_fail'     => 'CSRF 검증 실패. 다시 시도해 주세요',
+        'msg_captcha_fail'  => '인증 코드가 올바르지 않습니다. 다시 입력해 주세요!',
         'msg_login_fail'    => '아이디 또는 비밀번호가 잘못되었습니다!',
         'msg_link_added'    => '링크가 추가되었습니다!',
         'msg_link_updated'  => '링크가 업데이트되었습니다!',

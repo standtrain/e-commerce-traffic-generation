@@ -1,4 +1,5 @@
 <?php
+ob_start();
 if (!file_exists('config.php')) {
     if (file_exists('install.php')) {
         header('Location: install.php');
@@ -9,6 +10,11 @@ if (!file_exists('config.php')) {
 
 require_once 'config.php';
 require_once 'lang.php';
+
+// Start session for CAPTCHA and authentication
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // 兼容旧版config.php：如果缺少搜索函数则在此定义
 if (!function_exists('searchLinks')) {
@@ -76,6 +82,15 @@ if (!defined('INSTALLED') || INSTALLED !== true) {
 $message = '';
 $messageType = '';
 $action = $_GET['action'] ?? 'list';
+
+function validateCaptcha($input) {
+    if (empty($_SESSION['captcha_code'])) {
+        return false;
+    }
+    $valid = strtoupper(trim($input)) === $_SESSION['captcha_code'];
+    unset($_SESSION['captcha_code']);
+    return $valid;
+}
 
 function fetchHttp($url, $extraHeaders = []) {
     $ch = curl_init($url);
@@ -270,16 +285,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $message = t('msg_csrf_fail');
         $messageType = 'error';
     } elseif ($_POST['action'] === 'login') {
-        $user = getUserByUsername($_POST['username']);
-        if ($user && password_verify($_POST['password'], $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_role'] = $user['role'];
-            $_SESSION['username'] = $user['username'];
-            header('Location: admin.php');
-            exit;
-        } else {
-            $message = t('msg_login_fail');
+        // Validate CAPTCHA (only when enabled)
+        $captchaEnabled = isCaptchaEnabled();
+        if ($captchaEnabled && !validateCaptcha($_POST['captcha'] ?? '')) {
+            $message = t('msg_captcha_fail');
             $messageType = 'error';
+        } else {
+            $user = getUserByUsername($_POST['username']);
+            if ($user && password_verify($_POST['password'], $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_role'] = $user['role'];
+                $_SESSION['username'] = $user['username'];
+                header('Location: admin.php');
+                exit;
+            } else {
+                $message = t('msg_login_fail');
+                $messageType = 'error';
+            }
         }
     } elseif ($_POST['action'] === 'logout') {
         session_destroy();
@@ -579,6 +601,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         setSetting('background_image', sanitize($_POST['background_image']));
         setSetting('footer_code', $_POST['footer_code']);
         setSetting('custom_css', $_POST['custom_css']);
+        setSetting('captcha_enabled', isset($_POST['captcha_enabled']) ? '1' : '0');
         setSetting('ai_enabled', isset($_POST['ai_enabled']) ? '1' : '0');
         setSetting('ai_api_url', sanitize($_POST['ai_api_url']));
         setSetting('ai_api_key', sanitize($_POST['ai_api_key']));
@@ -645,6 +668,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             'font_color_title' => '',
             'font_color_body' => '',
             'font_color_secondary' => '',
+            'captcha_enabled' => '1',
         ];
         foreach ($defaults as $key => $value) {
             setSetting($key, $value);
@@ -653,6 +677,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $messageType = 'success';
     }
 }
+
 
 if ($action === 'login') {
     if (isLoggedIn()) {
@@ -1152,7 +1177,7 @@ if ($action !== 'login') {
             <?php if ($message): ?>
                 <div class="message message-<?php echo $messageType; ?>"><?php echo htmlspecialchars($message); ?></div>
             <?php endif; ?>
-            <form method="POST">
+            <form method="POST" id="loginForm">
                 <input type="hidden" name="action" value="login">
                 <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                 <div class="form-group">
@@ -1166,6 +1191,15 @@ if ($action !== 'login') {
                         <button type="button" class="toggle-btn" onclick="togglePassword('login_password', this)">👁️</button>
                     </div>
                 </div>
+                <?php if (isCaptchaEnabled()): ?>
+                <div class="form-group">
+                    <label>验证码</label>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <img src="captcha.php?t=<?php echo time(); ?>" alt="验证码" id="captchaImg" style="height:44px;border-radius:6px;cursor:pointer;" onclick="this.src='captcha.php?t='+Date.now()" title="点击刷新验证码">
+                        <input type="text" name="captcha" required maxlength="4" placeholder="请输入验证码" style="width:140px;font-size:1.1rem;letter-spacing:4px;text-align:center;text-transform:uppercase;" autocomplete="off">
+                    </div>
+                </div>
+                <?php endif; ?>
                 <button type="submit" class="btn btn-primary btn-full" style="margin-top: 8px;"><?php echo t('admin_login_btn'); ?></button>
             </form>
             <div class="login-back">
@@ -1173,6 +1207,8 @@ if ($action !== 'login') {
             </div>
         </div>
     </div>
+
+
 <?php else: ?>
     <div class="container">
         <div class="admin-header">
@@ -1621,6 +1657,18 @@ if ($action !== 'login') {
                 </div>
 
                 <div class="form-divider">
+                    <h3><?php echo t('admin_security_settings'); ?></h3>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" name="captcha_enabled" value="1" <?php echo ($settings['captcha_enabled'] ?? '1') === '1' ? 'checked' : ''; ?>>
+                        <?php echo t('admin_captcha_enable'); ?>
+                    </label>
+                    <div class="hint"><?php echo t('admin_captcha_enable_hint'); ?></div>
+                </div>
+
+                <div class="form-divider">
                     <h3><?php echo t('admin_ai_settings'); ?></h3>
                 </div>
 
@@ -1859,7 +1907,7 @@ function editUser(id) {
         document.getElementById('edit_is_admin').value = user.role === 'admin' ? '1' : '';
         const roleHint = document.getElementById('edit_role_hint');
         const isAdminSelect = document.getElementById('edit_is_admin');
-        if (user.id == <?php echo $_SESSION['user_id']; ?>) {
+        if (user.id == <?php echo (int)($_SESSION['user_id'] ?? 0); ?>) {
             roleHint.innerHTML = '<span style="color: #f59e0b;"><?php echo t('admin_role_hint'); ?></span>';
             isAdminSelect.disabled = true;
         } else {
@@ -2082,7 +2130,11 @@ document.querySelectorAll('.modal-overlay').forEach(modal => {
 });
 </script>
 <div style="text-align: center; padding: 20px; color: var(--gray-400); font-size: 0.82rem;">
-    Powered by <a href="https://blog.sttr.top" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 500;">standtrain</a>
+    Powered by <a href="https://blog.sttr.top" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 500;">standtrain</a> &middot; <a href="https://github.com/standtrain/e-commerce-traffic-generation" target="_blank" title="GitHub" style="color: var(--gray-400); text-decoration: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+    </a>
 </div>
 </body>
 </html>

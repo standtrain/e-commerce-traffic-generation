@@ -755,7 +755,7 @@ $cardIcon = $platformIcons[$link['platform']] ?? '🔗';
                 <h1><?php echo htmlspecialchars($link['title']); ?></h1>
                 <div class="hero-subtitle"><?php echo $cardIcon; ?> <?php echo htmlspecialchars($link['platform']); ?> <?php echo t('platform_suffix'); ?></div>
                 <?php if (!empty($link['price'])): ?>
-                <div class="hero-price"><?php echo t('price_label') ?>：<?php echo htmlspecialchars($link['price']); ?> <?php echo t('currency') ?></div>
+                <div class="hero-price"><?php echo t('price_label') ?>：<?php echo htmlspecialchars($link['price']); ?></div>
                 <?php endif; ?>
             </div>
 

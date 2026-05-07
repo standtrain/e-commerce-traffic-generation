@@ -64,4 +64,5 @@ INSERT INTO settings (`key`, `value`) VALUES
 ('ai_enabled', '0'),
 ('ai_api_url', ''),
 ('ai_api_key', ''),
-('ai_model', 'gpt-3.5-turbo');
+('ai_model', 'gpt-3.5-turbo'),
+('captcha_enabled', '1');
