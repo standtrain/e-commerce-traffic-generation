@@ -275,8 +275,31 @@ function uploadImage($file, $uploadDir = 'uploads/') {
 }
 
 function deleteImage($imagePath) {
-    if ($imagePath && file_exists($imagePath)) {
-        unlink($imagePath);
+    if (is_array($imagePath)) {
+        foreach (['full', 'thumb'] as $key) {
+            if (isset($imagePath[$key])) {
+                deleteImage($imagePath[$key]);
+            }
+        }
+        return;
+    }
+    if (!is_string($imagePath) || strlen($imagePath) > 512 || preg_match('/[\x00-\x1F]/', $imagePath)) {
+        return;
+    }
+    if (preg_match('/^https?:\/\//i', $imagePath)) {
+        return;
+    }
+    $uploadRoot = realpath(__DIR__ . '/uploads');
+    if ($uploadRoot === false) {
+        return;
+    }
+    $normalized = str_replace('\\', '/', $imagePath);
+    $candidate = preg_match('/^[A-Za-z]:\//', $normalized) || strpos($normalized, '/') === 0
+        ? $normalized
+        : __DIR__ . '/' . ltrim($normalized, '/');
+    $target = realpath($candidate);
+    if ($target !== false && strpos($target, $uploadRoot . DIRECTORY_SEPARATOR) === 0 && is_file($target)) {
+        unlink($target);
     }
 }
 
@@ -1106,7 +1129,7 @@ CONFIG;
                         <div class="info-box">
                             <h3>安装说明</h3>
                             <ul>
-                                <li>MySQL数据库信息（需提前创建数据库或使用root账号自动创建）</li>
+                                <li>MySQL数据库信息（需提前创建数据库或使用具备建库权限的账号自动创建）</li>
                                 <li>设置网站名称和管理员密码</li>
                                 <li>安装完成后会自动跳转到首页</li>
                             </ul>
@@ -1123,7 +1146,7 @@ CONFIG;
                         </div>
                         <div class="form-group">
                             <label>数据库用户名 <span>*</span></label>
-                            <input type="text" name="db_user" id="db_user" value="root" required placeholder="请输入数据库用户名">
+                            <input type="text" name="db_user" id="db_user" value="${DB_USER}" required placeholder="请输入数据库用户名">
                             <div class="field-error" id="err_db_user"></div>
                         </div>
                         <div class="form-group">

@@ -132,6 +132,66 @@ function extractMetaFromHtml($html) {
     return $result;
 }
 
+function getStoredImagePaths($image) {
+    $paths = [];
+    if (is_string($image)) {
+        $path = trim($image);
+        if ($path !== '') {
+            $paths[] = $path;
+        }
+    } elseif (is_array($image)) {
+        foreach (['full', 'thumb'] as $key) {
+            if (isset($image[$key]) && is_string($image[$key]) && trim($image[$key]) !== '') {
+                $paths[] = trim($image[$key]);
+            }
+        }
+        if (empty($paths)) {
+            foreach ($image as $value) {
+                $paths = array_merge($paths, getStoredImagePaths($value));
+            }
+        }
+    }
+    return array_values(array_unique($paths));
+}
+
+function deleteStoredImage($imagePath) {
+    if (!is_string($imagePath) || strlen($imagePath) > 512 || preg_match('/[\x00-\x1F]/', $imagePath)) {
+        return false;
+    }
+    if (preg_match('/^https?:\/\//i', $imagePath)) {
+        return false;
+    }
+
+    $uploadRoot = realpath(__DIR__ . '/uploads');
+    if ($uploadRoot === false) {
+        return false;
+    }
+
+    $normalized = str_replace('\\', '/', $imagePath);
+    $candidate = preg_match('/^[A-Za-z]:\//', $normalized) || strpos($normalized, '/') === 0
+        ? $normalized
+        : __DIR__ . '/' . ltrim($normalized, '/');
+    $target = realpath($candidate);
+
+    if ($target === false || strpos($target, $uploadRoot . DIRECTORY_SEPARATOR) !== 0) {
+        return false;
+    }
+
+    return is_file($target) ? unlink($target) : false;
+}
+
+function deleteStoredImages($imagesJson) {
+    $images = json_decode($imagesJson, true);
+    if (!is_array($images)) {
+        $images = [$imagesJson];
+    }
+    foreach ($images as $image) {
+        foreach (getStoredImagePaths($image) as $path) {
+            deleteStoredImage($path);
+        }
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     // 一键获取URL信息（跳过CSRF验证，只读操作）
     if ($_POST['action'] === 'fetch_url_info') {
@@ -349,10 +409,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $currentLink = getLinkById($_POST['id']);
         if (isset($_POST['delete_images']) && $_POST['delete_images'] === '1') {
             if ($currentLink && $currentLink['images']) {
-                $oldImages = json_decode($currentLink['images'], true) ?: [];
-                foreach ($oldImages as $oldImg) {
-                    deleteImage($oldImg);
-                }
+                deleteStoredImages($currentLink['images']);
             }
             $imagesJson = '';
         } else {
@@ -361,10 +418,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $imagesJson = $currentLink['images'] ?? '';
             }
             if ($imagesJson && $currentLink && $currentLink['images'] && $currentLink['images'] !== $imagesJson) {
-                $oldImages = json_decode($currentLink['images'], true) ?: [];
-                foreach ($oldImages as $oldImg) {
-                    deleteImage($oldImg);
-                }
+                deleteStoredImages($currentLink['images']);
             }
         }
         updateLink(
@@ -492,16 +546,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         exit;
     } elseif ($_POST['action'] === 'delete_link') {
         requireLogin();
-        $link = getLinkById($_POST['id']);
-        if ($link && $link['images']) {
-            $images = json_decode($link['images'], true) ?: [];
-            foreach ($images as $img) {
-                deleteImage($img);
+        $linkId = sanitize($_POST['id'] ?? '');
+        if (!preg_match('/^[A-Za-z0-9_-]{1,50}$/', $linkId)) {
+            $message = t('msg_invalid_request');
+            $messageType = 'error';
+        } else {
+            $link = getLinkById($linkId);
+            if (!$link) {
+                $message = t('msg_link_not_found');
+                $messageType = 'error';
+            } else {
+                deleteLink($linkId);
+                if (getLinkById($linkId)) {
+                    $message = t('msg_delete_failed');
+                    $messageType = 'error';
+                } else {
+                    if (!empty($link['images'])) {
+                        deleteStoredImages($link['images']);
+                    }
+                    $message = t('msg_link_deleted');
+                    $messageType = 'success';
+                }
             }
         }
-        deleteLink($_POST['id']);
-        $message = t('msg_link_deleted');
-        $messageType = 'success';
     } elseif ($_POST['action'] === 'toggle_link') {
         requireLogin();
         $link = getLinkById($_POST['id']);
